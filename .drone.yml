@@ -9,7 +9,7 @@ steps:
       username: hsmtkk
       password:
         from_secret: DOCKER_HUB_TOKEN
-      repo: hsmtkk/openssl_docker
+      repo: hsmtkk/openssl
       tags:
         - latest
         - 1.1.1g
