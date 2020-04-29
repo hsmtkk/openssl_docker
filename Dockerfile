@@ -1,22 +1,20 @@
-FROM centos:8 as builder
+FROM ubuntu:20.04 as builder
 
-RUN yum -y update \
- && yum -y install gcc make perl
+RUN apt -y update \
+ && apt -y install curl gcc make perl
 
 WORKDIR /usr/local/src
 
 RUN curl -L -O https://www.openssl.org/source/openssl-1.1.1g.tar.gz \
  && tar fxz openssl-1.1.1g.tar.gz \
  && cd openssl-1.1.1g \
- && ./config --prefix=/usr/local enable-md2 shared \
+ && ./config --prefix=/usr/local/openssl enable-md2 shared \
  && make \
  && make test \
  && make install_sw
 
-RUN rm -rf /usr/local/src/*
+FROM ubuntu:20.04
 
-FROM centos:8
+COPY --from=builder /usr/local/openssl /usr/local/openssl
 
-COPY --from=builder /usr/local /usr/local
-
-RUN openssl version
+RUN env LD_LIBRARY_PATH=/usr/local/openssl/lib /usr/local/openssl/bin/openssl version
